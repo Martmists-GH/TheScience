@@ -5,4 +5,6 @@ import data
 
 bot = data.Bot(config)
 
+bot.load_cogs()
+
 bot.run()

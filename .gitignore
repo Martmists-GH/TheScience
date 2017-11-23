@@ -106,3 +106,4 @@ ENV/
 
 # confidential
 config.py
+userdata.json

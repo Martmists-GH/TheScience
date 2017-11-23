@@ -3,7 +3,7 @@ from utils.io import JSONFile
 
 
 class Bot(Bot_):
-    def __init_(self, config):
+    def __init__(self, config):
         self.token = config.token
         self.config = config
         self.data = JSONFile("userdata.json")

@@ -18,6 +18,8 @@ import traceback
 import discord
 from discord.ext import commands
 
+import config
+
 
 class Admin:
     def __init__(self, bot):
@@ -39,7 +41,7 @@ class Admin:
         if len(lines) != 1:
             lines += [""]
 
-        # Create the inpit dialog
+        # Create the input dialog
         for i, line in enumerate(lines):
             if i == 0:
                 s = f"In [{self.ln}]: "
@@ -164,7 +166,7 @@ async def func():
     @commands.command(aliases=['kys'])
     @commands.check(lambda ctx: ctx.message.author.id == config.owner)
     async def shutdown(self, ctx):
-        """Shuts down the bot.... Duh."""
+        """Shuts down the bot"""
         await ctx.send("Logging out...")
         await self.bot.logout()
 

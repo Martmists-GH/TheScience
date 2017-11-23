@@ -1,15 +1,25 @@
 import ujson as json
 
+
 class JSONFile:
     def __init__(self, path):
+        self.path = path
         with open(path) as f:
             self.data = json.load(f)
 
+    def __setitem__(self, key, value):
+        self.data[key] = value
+        with open(self.path, "w") as f:
+            json.dump(self.data, f)
+
     def __getattr__(self, item):
-        return self.data.item
+        return getattr(self.data, item)
 
     def __getitem__(self, item):
         return self.data[item]
+
+    def __contains__(self, item):
+        return self.data.__contains__(item)
 
 
 class AttrDict:
