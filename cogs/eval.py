@@ -4,6 +4,8 @@ Unauthorized copying of this file, via any medium is strictly prohibited
 Proprietary and confidential
 Written by Martmists <legal@martmists.com> and
            Alexflipnote <alexander@samuels1.no>, June 2017
+
+Usage by The SCIENCE authorized by Martmists
 """
 
 
