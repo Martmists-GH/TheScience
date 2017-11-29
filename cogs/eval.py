@@ -50,7 +50,7 @@ class Admin:
 
             else:
                 # Indent the 3 dots correctly
-                s = f"{{:<{len(str(self.ln))+2}}}...: "
+                s = f"{(len(str(self.ln))+2)*' '}...: "
 
             if i == len(lines)-2:
                 if line.startswith("return"):

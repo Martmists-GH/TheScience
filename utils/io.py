@@ -10,7 +10,7 @@ class JSONFile:
     def __setitem__(self, key, value):
         self.data[key] = value
         with open(self.path, "w") as f:
-            json.dump(self.data, f)
+            json.dump(self.data, f, indent=4)
 
     def __getattr__(self, item):
         return getattr(self.data, item)

@@ -107,3 +107,6 @@ ENV/
 # confidential
 config.py
 userdata.json
+
+# Linters
+.pylintrc
