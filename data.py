@@ -9,8 +9,8 @@ class Bot(Bot_):
     def __init__(self, config):
         self.token = config.token
         self.config = config
-        self.data = JSONFile("userdata.json")
         super().__init__(command_prefix=config.prefix)
+        self.data = JSONFile("userdata.json", self.loop)
 
     def run(self):
         super().run(self.token)
@@ -26,7 +26,7 @@ class Bot(Bot_):
         role = [role for role in member.guild.roles
                 if role.id == self.config.interns_role][0]
         await member.add_roles(role)
-        await self.log(f"Gave {str(member)} the Scientist role on join")
+        await self.log(f"Gave {str(member)} the Interns role on join")
 
     async def on_message(self, message):
         if message.author.id == self.user.id:

@@ -50,7 +50,7 @@ class Level:
         if (level == 25 and
                 self.introle not in [r.id for r in message.author.roles]):
             await self.log(
-                f"{str(message.author)} has earned the Interns role")
+                f"{str(message.author)} has earned the Scientists role")
             role = [r for r in message.guild.roles if r.id == self.role][0]
             introle = [r for r in message.guild.roles
                        if r.id == self.introle][0]
