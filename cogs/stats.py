@@ -43,21 +43,19 @@ class StatTracker:
 
         x_axis = list(range(start, end+1, 15))
         y_axis = []
+        x_temp = []
 
         for x in x_axis:
             if x in hist:
                 val = hist[x]
-            else:
-                val = last  # noqa
 
-            y_axis.append(val)
+                x_temp.append(x)
+                y_axis.append(val)
 
-            last = val  # noqa
-
-        print(x_axis, y_axis)
+        print(x_temp, y_axis)
 
         # smoothing
-        x_axis_new = linspace(min(x), max(x), len(x_axis)*100)
+        x_axis_new = linspace(min(x_temp), max(x_temp), 100)
         y_axis_new = spline(x_axis, y_axis, x_axis_new)
 
         line, = plot(x_axis_new, y_axis_new)
