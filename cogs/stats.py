@@ -4,30 +4,33 @@ import io
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib.pyplot import plot, savefig, close # noqa
-from numpy import linspace # noqa
-from scipy.interpolate import spline # noqa
-import discord # noqa
-from discord.ext import commands # noqa
+from numpy import linspace  # noqa
+from scipy.interpolate import spline  # noqa
+import discord  # noqa
+from discord.ext import commands  # noqa
+
+from utils.io import JSONFile  # noqa
 
 
 class StatTracker:
     def __init__(self, bot):
         self.data = bot.data
         self.data.add_update_handler(self.handle_data_update)
-        self._history = {}
+        self._history = JSONFile("history.json")
         self.current_hour = 0
         self._task = bot.loop.create_task(self.increase_hour())
 
     async def increase_hour(self):
         while True:
-            await asyncio.sleep(900)
-            self.current_hour += 15
+            await asyncio.sleep(600)
+            self.current_hour += 10
 
     async def handle_data_update(self, var, value):
         if var not in self._history:
             self._history[var] = {}
 
         self._history[var][self.current_hour] = value
+        self._history["update_trigger"] = 0
 
     @commands.command()
     async def history(self, ctx, user: discord.Member = None):
@@ -47,16 +50,14 @@ class StatTracker:
 
         for x in x_axis:
             if x in hist:
-                val = hist[x]
-
                 x_temp.append(x)
-                y_axis.append(val)
+                y_axis.append(hist[x])
 
         print(x_temp, y_axis)
 
         # smoothing
         x_axis_new = linspace(min(x_temp), max(x_temp), 100)
-        y_axis_new = spline(x_axis, y_axis, x_axis_new)
+        y_axis_new = spline(x_temp, y_axis, x_axis_new)
 
         line, = plot(x_axis_new, y_axis_new)
 
@@ -66,7 +67,7 @@ class StatTracker:
 
         close()
 
-        await ctx.send(f"History of points recorded for {str(lookup)} per min",
+        await ctx.send(f"History of XP recorded for {str(lookup)} per min",
                        file=discord.File(b, filename="History.png"))
 
 
