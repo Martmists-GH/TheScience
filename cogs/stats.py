@@ -3,7 +3,7 @@ import io
 
 import matplotlib
 matplotlib.use('Agg')
-from matplotlib.pyplot import plot, savefig, close # noqa
+from matplotlib.pyplot import plot, savefig, close  # noqa
 from numpy import linspace  # noqa
 from scipy.interpolate import spline  # noqa
 import discord  # noqa
@@ -16,7 +16,7 @@ class StatTracker:
     def __init__(self, bot):
         self.data = bot.data
         self.data.add_update_handler(self.handle_data_update)
-        self._history = JSONFile("history.json")
+        self._history = JSONFile("history.json", bot.loop)
         self.current_hour = 0
         self._task = bot.loop.create_task(self.increase_hour())
 
@@ -59,7 +59,7 @@ class StatTracker:
         x_axis_new = linspace(min(x_temp), max(x_temp), 100)
         y_axis_new = spline(x_temp, y_axis, x_axis_new)
 
-        line, = plot(x_axis_new, y_axis_new)
+        plot(x_axis_new, y_axis_new)
 
         b = io.BytesIO()
         savefig(b, format="png")

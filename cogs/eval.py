@@ -8,7 +8,6 @@ Written by Martmists <legal@martmists.com> and
 Usage by The SCIENCE authorized by Martmists
 """
 
-
 import contextlib
 import io
 import inspect
@@ -52,7 +51,7 @@ class Admin:
                 # Indent the 3 dots correctly
                 s = f"{(len(str(self.ln))+2)*' '}...: "
 
-            if i == len(lines)-2:
+            if i == len(lines) - 2:
                 if line.startswith("return"):
                     line = line[6:].strip()
 
@@ -81,7 +80,7 @@ class Admin:
             if (isinstance(out, str) and
                     out.startswith("Traceback (most recent call last):\n")):
                 # Leave out the traceback message
-                out = "\n"+"\n".join(out.split("\n")[1:])
+                out = "\n" + "\n".join(out.split("\n")[1:])
 
             pretty = (pprint.pformat(out, compact=True, width=60) if not
                       isinstance(out, str) else str(out))
@@ -92,7 +91,7 @@ class Admin:
 
             if pretty.count("\n") > 20:
                 # Text too long, shorten
-                l = pretty.split("\n")
+                l = pretty.split("\n")  # noqa
                 pretty = "\n".join(l[:3]) + "\n ...\n" + "\n".join(l[-3:])
 
             # Add the output
@@ -161,7 +160,7 @@ async def func():
                 r"^(return|import|for|while|def|class|"
                 r"from|exit|[a-zA-Z0-9]+\s*=)",
                 code, re.M) and len(code.split("\n")) == 1:
-            code = "_ = "+code
+            code = "_ = " + code
 
         await self._eval(ctx, code)
 

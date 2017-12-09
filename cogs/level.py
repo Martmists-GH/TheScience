@@ -40,7 +40,7 @@ class Level:
         xp, rank = by_id.get(str(lookup.id), (0, "Unknown"))
         _, _, level = get_xp_max_curlev(xp)
         top = [f"{rank+1}) {ctx.guild.get_member(int(id))} - {score}"
-               for (rank, (id, score)) in data[:3]]
+               for (rank, (id, score)) in data[:3]]  # noqa
         await ctx.send(f"Level: {level}\nXP: {xp}\n"
                        f"Rank: {rank+1}\n" + "\n".join(top))
 
