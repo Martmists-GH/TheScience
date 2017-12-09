@@ -29,7 +29,7 @@ class StatTracker:
         if var not in self._history:
             self._history[var] = {}
 
-        self._history[var][self.current_hour] = value
+        self._history[var][str(self.current_hour)] = value
         self._history["update_trigger"] = 0
 
     @commands.command()
@@ -40,9 +40,9 @@ class StatTracker:
         if hist is None:
             return await ctx.send("No xp changes recorded!")
 
-        s = sorted(hist)
-        start = s[0]
-        end = s[-1]
+        s = sorted(hist, key=lambda x: int(x))
+        start = int(s[0])
+        end = int(s[-1])
 
         x_axis = list(range(start, end+1, 15))
         y_axis = []
@@ -53,7 +53,8 @@ class StatTracker:
                 x_temp.append(x)
                 y_axis.append(hist[x])
 
-        print(x_temp, y_axis)
+        if not x_temp:
+            return await ctx.send("No xp changes recorded!")
 
         # smoothing
         x_axis_new = linspace(min(x_temp), max(x_temp), 100)
