@@ -8,6 +8,9 @@ class Mod:
         self.role = bot.config.admin_role
         self.bad_words = bot.config.bad_words
 
+    async def on_message_update(self, before, after):
+        self.on_message(after)
+
     async def on_message(self, message):
         if message.author.id == self.bot.user.id:
             return
