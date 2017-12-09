@@ -47,8 +47,8 @@ class Level:
     async def on_message(self, message):
         data = self.data[str(message.author.id)]
         current, next_, level = get_xp_max_curlev(data)
-        if (level == 25 and
-                self.introle not in [r.id for r in message.author.roles]):
+        if (level >= 25 and
+                self.role not in [r.id for r in message.author.roles]):
             await self.log(
                 f"{str(message.author)} has earned the Scientists role")
             role = [r for r in message.guild.roles if r.id == self.role][0]

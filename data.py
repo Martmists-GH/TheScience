@@ -29,7 +29,7 @@ class Bot(Bot_):
         await self.log(f"Gave {str(member)} the Interns role on join")
 
     async def on_message(self, message):
-        if message.author.id == self.user.id:
+        if message.author.id == self.user.id or message.guild is None:
             return
 
         userid = message.author.id

@@ -15,7 +15,7 @@ class Mod:
         if self.role in [r.id for r in message.author.roles]:
             return
 
-        if re.match(r"https?://", message.content.lower().replace(" ", "")):
+        if re.search("https?://", message.content.lower().replace(" ", "")):
             await message.delete()
             await self.log(f"Deleted a message by {str(message.author)}"
                            f" in #{message.channel.name} for having a link."
