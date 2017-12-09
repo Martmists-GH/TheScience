@@ -17,7 +17,11 @@ class StatTracker:
         self.data = bot.data
         self.data.add_update_handler(self.handle_data_update)
         self._history = JSONFile("history.json", bot.loop)
-        self.current_hour = 0
+        m = 0
+        for val in self._history.data.values():
+            t = int(max(list(val.keys()), key=lambda x, int(x)))
+            m = t if t > m else m
+        self.current_hour = int(m)
         self._task = bot.loop.create_task(self.increase_hour())
 
     async def increase_hour(self):
