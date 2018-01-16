@@ -3,9 +3,9 @@ import io
 
 import matplotlib
 matplotlib.use('Agg')
-from matplotlib.pyplot import plot, savefig, close  # noqa
-from numpy import linspace  # noqa
-from scipy.interpolate import spline  # noqa
+from matplotlib.pyplot import plot, savefig, close, scatter  # noqa
+from numpy import linspace, poly1d, polyfit  # noqa
+# from scipy.interpolate import splev, splrep  # noqa
 import discord  # noqa
 from discord.ext import commands  # noqa
 
@@ -19,22 +19,30 @@ class StatTracker:
         self._history = JSONFile("history.json", bot.loop)
         m = 0
         for val in self._history.data.values():
-            t = int(max(list(val.keys()), key=lambda x, int(x)))
+            t = int(max(list(val["total"].keys()) or [], key=int))
             m = t if t > m else m
         self.current_hour = int(m)
         self._task = bot.loop.create_task(self.increase_hour())
 
     async def increase_hour(self):
         while True:
-            await asyncio.sleep(600)
-            self.current_hour += 10
+            await asyncio.sleep(3600)
+            self.current_hour += 1
 
     async def handle_data_update(self, var, value):
         if var not in self._history:
-            self._history[var] = {}
+            self._history[var] = {"total": {}, "delta": {}, "last": value}
 
-        self._history[var][str(self.current_hour)] = value
-        self._history["update_trigger"] = 0
+        usr = self._history[var]
+        h = str(self.current_hour)
+
+        if h not in usr["delta"]:
+            usr["delta"][h] = value - usr["last"]
+            usr["last"] = value
+
+        usr["total"][h] = value
+        usr["delta"][h] += value - usr["delta"][h] - usr["last"]
+        self._history["update_trigger"] = {"total": {"0": 0}, "delta": {}, "last": 0}
 
     @commands.command()
     async def history(self, ctx, user: discord.Member = None):
@@ -44,27 +52,49 @@ class StatTracker:
         if hist is None:
             return await ctx.send("No xp changes recorded!")
 
-        s = sorted(hist, key=lambda x: int(x))
-        start = int(s[0])
-        end = int(s[-1])
+        hist = hist["total"]
 
-        x_axis = list(range(start, end+1, 15))
+        s = [int(x) for x in sorted(hist, key=int)]
+        start = s[0]
+        end = s[-1]
+
+        x_axis = list(range(start, end+1, 10))
         y_axis = []
         x_temp = []
 
         for x in x_axis:
-            if x in hist:
+            if x in s:
                 x_temp.append(x)
-                y_axis.append(hist[x])
+                y_axis.append(hist[str(x)])
+
+        print(x_axis, x_temp, y_axis)
 
         if not x_temp:
             return await ctx.send("No xp changes recorded!")
 
         # smoothing
-        x_axis_new = linspace(min(x_temp), max(x_temp), 100)
-        y_axis_new = spline(x_temp, y_axis, x_axis_new)
 
-        plot(x_axis_new, y_axis_new)
+        z = polyfit(x_temp, y_axis, 100)
+        p = poly1d(z)
+
+        print(z)
+
+        s = len(z)
+
+        x_axis = linspace(min(x_axis), max(x_axis), 5000)
+        y_axis_new = p(x_axis)
+
+        # spl = splrep(x_temp, y_axis)
+        # x_axis = linspace(min(x_axis), max(x_axis), 5000)
+        # y_axis_new = splev(x_axis, spl)
+
+        # x_axis = linspace(min(x_axis), max(x_axis), 5000)
+        # y_axis_new = spline(x_temp, y_axis, x_axis)
+
+        # f = interp1d(x_temp, y_axis, kind='nearest', fill_value="extrapolate")
+        # y_axis_new = f(x_axis)
+
+        plot(x_temp, y_axis, 'o', x_axis, y_axis_new, '-')
 
         b = io.BytesIO()
         savefig(b, format="png")
@@ -72,7 +102,7 @@ class StatTracker:
 
         close()
 
-        await ctx.send(f"History of XP recorded for {str(lookup)} per min",
+        await ctx.send(f"History of XP recorded for {str(lookup)} per hour",
                        file=discord.File(b, filename="History.png"))
 
 
